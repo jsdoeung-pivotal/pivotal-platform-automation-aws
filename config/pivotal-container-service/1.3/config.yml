@@ -1,0 +1,54 @@
+---
+product-name: pivotal-container-service
+network-properties:
+  singleton_availability_zone:
+    name: ((az1))
+  other_availability_zones:
+  - name: ((az1))
+  - name: ((az2))
+  - name: ((az3))
+  network:
+    name: pks
+  service_network:
+    name: services
+product-properties:
+  .pivotal-container-service.pks_tls:
+    value:
+      cert_pem: ((domain-crt))
+      private_key_pem: ((domain-key))
+  .properties.pks_api_hostname:
+    value: api.pks.((subdomain-name)).((domain-name))
+  .properties.plan1_selector.active.master_az_placement:
+    value:
+    - ((az1))
+    - ((az2))
+    - ((az3))
+  .properties.plan1_selector.active.worker_az_placement:
+    value:
+    - ((az1))
+    - ((az2))
+    - ((az3))
+  .properties.plan1_selector.active.worker_instances:
+    value: 1
+  .properties.plan2_selector:
+    value: Plan Inactive
+  .properties.plan3_selector:
+    value: Plan Inactive
+  .properties.cloud_provider:
+    value: AWS
+  .properties.cloud_provider.aws.iam_instance_profile_master:
+    value: ((pks_master_iam_instance_profile_name))
+  .properties.cloud_provider.aws.iam_instance_profile_worker:
+    value: ((pks_worker_iam_instance_profile_name))
+  .properties.vm_extensions:
+    value:
+    - public_ip
+  .properties.telemetry_selector:
+    value: disabled
+errand-config:
+  upgrade-all-service-instances:
+    post-deploy-state: false
+resource-config:
+  pivotal-container-service:
+    elb_names:
+    - ((subdomain-name))-pks-api
